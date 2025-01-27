@@ -12,8 +12,8 @@ using TaskList.Data;
 namespace TaskList.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250124165026_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250127120150_BuggedUpdateRestart")]
+    partial class BuggedUpdateRestart
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -102,10 +102,12 @@ namespace TaskList.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PasswordHash")
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -114,13 +116,24 @@ namespace TaskList.Migrations
                     b.HasKey("User_Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            User_Id = 1,
+                            Email = "pete@pete.com",
+                            IsAdmin = true,
+                            Password = "peteadmin123",
+                            Username = "pete"
+                        });
                 });
 
             modelBuilder.Entity("TaskList.Models.Task", b =>
                 {
                     b.HasOne("TaskList.Models.User", "User")
                         .WithMany("Tasks")
-                        .HasForeignKey("User_Id");
+                        .HasForeignKey("User_Id")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("User");
                 });

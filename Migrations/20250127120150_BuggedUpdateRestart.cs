@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TaskList.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class BuggedUpdateRestart : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,7 +32,8 @@ namespace TaskList.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsAdmin = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -58,7 +59,8 @@ namespace TaskList.Migrations
                         name: "FK_Tasks_Users_User_Id",
                         column: x => x.User_Id,
                         principalTable: "Users",
-                        principalColumn: "User_Id");
+                        principalColumn: "User_Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -84,6 +86,11 @@ namespace TaskList.Migrations
                         principalColumn: "Task_Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "User_Id", "Email", "IsAdmin", "Password", "Username" },
+                values: new object[] { 1, "pete@pete.com", true, "peteadmin123", "pete" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tasks_User_Id",
