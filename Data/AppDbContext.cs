@@ -6,7 +6,7 @@ using Task = TaskList.Models.Task;
 
 namespace TaskList.Data
 {
-    public class AppDbContext : IdentityDbContext<IdentityUser>
+    public class AppDbContext : DbContext
     {
         public DbSet<User> Users { get; set; }
 
