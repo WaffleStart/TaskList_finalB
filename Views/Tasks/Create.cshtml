@@ -1,0 +1,89 @@
+﻿@model TaskList.ViewModels.TaskViewModel
+
+@{
+	ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+<!-- Using comments to seperate this file specifically because this is making me losing my mind.-->
+<h4>Task</h4>
+<hr />
+<div class="row">
+	<div class="col-md-4">
+		<form asp-action="Create">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+			<!-- User -->
+			<div class="form-group">
+				@if (ViewContext.HttpContext.Session.GetString("UserType") == "Admin")
+				{
+					<label asp-for="User_Id" class="control-label"></label>
+					<select asp-for="User_Id" class="form-control" asp-items="ViewBag.User_Id"></select>
+					<span asp-validation-for="User_Id" class="text-danger"></span>
+				}
+				else{
+					
+					var currentUserEmail = ViewContext.HttpContext.Session.GetString("UserEmail");
+					<label class="control-label">Logged In User Email</label>
+					<input type="text" value="@currentUserEmail" class="form-control" readonly />
+
+					var currentUserId = ViewContext.HttpContext.Session.GetInt32("UserId"); 
+					<input type="hidden" asp-for="User_Id" value="@currentUserId" />
+				}
+			</div>
+			<!-- Title -->
+			<div class="form-group">
+				<label asp-for="Title" class="control-label"></label>
+				<input asp-for="Title" class="form-control" />
+				<span asp-validation-for="Title" class="text-danger"></span>
+			</div>
+
+			<!-- Description -->
+			<div class="form-group">
+				<label asp-for="Description" class="control-label"></label>
+				<input asp-for="Description" class="form-control" />
+				<span asp-validation-for="Description" class="text-danger"></span>
+			</div>
+
+			<!-- Due Date -->
+			<div class="form-group">
+				<label asp-for="DueDate" class="control-label"></label>
+				<input asp-for="DueDate" Min="@DateTime.Today.ToString("yyyy-MM-dd")" type="date" class="form-control" />
+				<span asp-validation-for="DueDate" class="text-danger"></span>
+			</div>
+
+			<!-- Status -->
+			<div class="form-group">
+				<label asp-for="Status" class="control-label"></label>
+				<select asp-for="Status" class="form-control">
+					<option value="Pending">Pending</option>
+					<option value="In Progress">In Progress</option>
+					<option value="Completed">Completed</option>
+				</select>
+				<span asp-validation-for="Status" class="text-danger"></span>
+			</div>
+
+			<!-- Tags -->
+			<div class="form-group">
+				<label asp-for="Tags" class="control-label">Tags</label>
+				<select asp-for="Tags" class="form-control" asp-items="ViewBag.Tags" multiple="multiple"></select>
+				<span asp-validation-for="Tags" class="text-danger"></span>
+			</div>
+
+			<!-- Submit Button -->
+			<div class="form-group">
+				<input type="submit" value="Create" class="btn btn-primary" />
+			</div>
+		</form>
+	</div>
+</div>
+
+<div>
+	<a class="btn btn-primary" asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+}
